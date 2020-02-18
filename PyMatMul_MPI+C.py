@@ -11,7 +11,8 @@ TaskMaster = 0
 MPIT_MATRIX_A = 2
 
 def wrap_matmul(A, B, chunk):
-   return matmul.matmul(A, B, chunk)
+    return matmul.matmul_omp(A, B, chunk)
+    #return matmul.matmul(A, B, chunk)
 
 # Main
 # MPI variables
@@ -50,12 +51,9 @@ else:
 # Matrix Multiplication
 print('TASK '+str(mpiRank)+' | Multiplying...')
 C = wrap_matmul(A, B, chunk)
-#C = matmul.matmul(A, B, chunk)
-#C = matmul.matmul_omp(A, B, chunk)
 
 # Gather of all results in MASTER
 C = comm.gather(C, root=TaskMaster)
-#print(C)
 # Master checks the result
 if mpiRank == TaskMaster:
     R = np.matmul(A, B)
